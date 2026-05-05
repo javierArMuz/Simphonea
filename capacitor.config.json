@@ -1,0 +1,6 @@
+{
+  "appId": "com.simphonea.app",
+  "appName": "Simphonea",
+  "webDir": ".",
+  "bundledWebRuntime": false
+}

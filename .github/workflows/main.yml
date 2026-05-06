@@ -5,26 +5,44 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    # We use a container that already has Android SDK and tools to avoid path issues
+    container:
+      image: node:20-bookworm
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
+      - name: Install System Dependencies
+        run: |
+          apt-get update
+          apt-get install -y openjdk-17-jdk-headless wget unzip
+          # Install Android SDK
+          mkdir -p /opt/android-sdk/cmdline-tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O /tmp/tools.zip
+          unzip /tmp/tools.zip -d /opt/android-sdk/cmdline-tools
+          mv /opt/android-sdk/cmdline-tools/cmdline-tools /opt/android-sdk/cmdline-tools/latest
+          
+      - name: Set Android Environment
+        run: |
+          echo "ANDROID_HOME=/opt/android-sdk" >> $GITHUB_ENV
+          echo "PATH=$PATH:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools" >> $GITHUB_ENV
+          
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
 
       - name: Configure Bubblewrap
         run: |
-          # Use 'yes n' to answer 'No' to 'Do you want to install JDK?' 
-          # because we already have JDK 17 from setup-java
-          yes n | bubblewrap updateConfig --jdkPath "$JAVA_HOME" --androidSdkPath "$ANDROID_SDK_ROOT"
+          mkdir -p ~/.bubblewrap
+          # Explicitly set paths in the config file
+          cat <<EOF > ~/.bubblewrap/config.json
+          {
+            "jdkPath": "/usr/lib/jvm/java-17-openjdk-amd64",
+            "androidSdkPath": "/opt/android-sdk"
+          }
+          EOF
+          # Accept Android licenses
+          yes | /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=/opt/android-sdk --install "platforms;android-33" "build-tools;33.0.2"
 
       - name: Build APK
         run: |
@@ -62,13 +80,13 @@ jobs:
           }
           EOF
 
-          # Generate a temporary keystore
+          # Generate keystore
           keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000 -storepass password -keypass password -dname "CN=Simphonea, OU=Dev, O=Simphonea, L=Any, S=Any, C=US"
 
-          # Run build non-interactively
-          yes | bubblewrap build --manifest ./twa-manifest.json --skipCheck --signingKeyPath ./my-release-key.keystore --signingKeyAlias my-key-alias --signingKeyPassword password --signingStorePassword password
+          # Build APK
+          bubblewrap build --manifest ./twa-manifest.json --skipCheck --signingKeyPath ./my-release-key.keystore --signingKeyAlias my-key-alias --signingKeyPassword password --signingStorePassword password
           
-          # Rename the final APK
+          # Rename output
           find . -name "*release-signed.apk" -exec mv {} Simphonea.apk \;
           if [ ! -f Simphonea.apk ]; then find . -name "*.apk" -exec mv {} Simphonea.apk \; ; fi
 

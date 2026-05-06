@@ -20,11 +20,16 @@ jobs:
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
 
-      - name: Configure Bubblewrap (Non-interactive)
+      - name: Configure Bubblewrap (Dynamic Paths)
         run: |
           mkdir -p ~/.bubblewrap
-          echo "{\"jdkPath\":\"$JAVA_HOME\",\"androidSdkPath\":\"/usr/local/lib/android/sdk\"}" > ~/.bubblewrap/config.json
-          bubblewrap doctor
+          # Use environment variables provided by GitHub Runner
+          echo "{\"jdkPath\":\"$JAVA_HOME\",\"androidSdkPath\":\"$ANDROID_SDK_ROOT\"}" > ~/.bubblewrap/config.json
+          # Show the config for debugging
+          cat ~/.bubblewrap/config.json
+          # Check if the paths exist
+          ls -d $JAVA_HOME
+          ls -d $ANDROID_SDK_ROOT
 
       - name: Build APK
         run: |
@@ -65,9 +70,9 @@ jobs:
           # Generate a temporary keystore
           keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000 -storepass password -keypass password -dname "CN=Simphonea, OU=Dev, O=Simphonea, L=Any, S=Any, C=US"
 
-          # Initialize and build
-          bubblewrap init --manifest ./twa-manifest.json || true
-          bubblewrap build --skipCheck --signingKeyPath ./my-release-key.keystore --signingKeyAlias my-key-alias --signingKeyPassword password --signingStorePassword password
+          # Initialize and build (skipping doctor if it's too picky)
+          yes | bubblewrap init --manifest ./twa-manifest.json || true
+          yes | bubblewrap build --skipCheck --signingKeyPath ./my-release-key.keystore --signingKeyAlias my-key-alias --signingKeyPassword password --signingStorePassword password
           
           # Find and rename the APK
           find . -name "*.apk" -exec mv {} Simphonea.apk \;

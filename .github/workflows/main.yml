@@ -1,4 +1,4 @@
-name: Simphonea Build
+name: Build Simphonea APK
 
 on: [push]
 
@@ -8,13 +8,68 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Create Simphonea Artifact
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install Bubblewrap
+        run: npm install -g @bubblewrap/cli
+
+      - name: Build APK
+        run: |
+          # Create a minimal twa-manifest.json for the build
+          # This avoids polluting the repo with Android files
+          cat <<EOF > twa-manifest.json
+          {
+            "packageId": "com.simphonea.app",
+            "host": "simphonea.app",
+            "name": "Simphonea",
+            "launcherName": "Simphonea",
+            "display": "standalone",
+            "themeColor": "#fbbf24",
+            "navigationColor": "#050506",
+            "backgroundColor": "#050506",
+            "startUrl": "/",
+            "iconUrl": "https://cdn-icons-png.flaticon.com/512/3063/3063713.png",
+            "maskableIconUrl": "https://cdn-icons-png.flaticon.com/512/3063/3063713.png",
+            "splashScreenFadeOutDuration": 300,
+            "shortcuts": [],
+            "webManifestUrl": "https://raw.githubusercontent.com/${{ github.repository }}/main/manifest.json",
+            "fallbackType": "custom_tabs",
+            "features": {},
+            "alphaDependencies": { "enabled": false },
+            "enableNotifications": false,
+            "enableInAppBilling": false,
+            "locationDelegation": false,
+            "playServicesMeasurementId": null,
+            "orientation": "portrait",
+            "fingerprints": [],
+            "additionalTrustedOrigins": [],
+            "recreateCLIConfig": true,
+            "signingKey": {
+              "path": "./my-release-key.keystore",
+              "alias": "my-key-alias"
+            }
+          }
+          EOF
+
+          # Generate a temporary keystore for the build
+          keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000 -storepass password -keypass password -dname "CN=Simphonea, OU=Dev, O=Simphonea, L=Any, S=Any, C=US"
+
+          # Initialize and build (using yes to accept defaults)
+          yes | bubblewrap init --manifest ./twa-manifest.json || true
+          yes | bubblewrap build --skipCheck --signingKeyPath ./my-release-key.keystore --signingKeyAlias my-key-alias --signingKeyPassword password --signingStorePassword password
+          
+          # Find and rename the APK
+          find . -name "*.apk" -exec mv {} Simphonea.apk \;
+
+      - name: Upload Simphonea APK
         uses: actions/upload-artifact@v4
         with:
-          name: Simphonea-Web-App
-          path: |
-            DISEÑO.HTML
-            manifest.json
-            .github/workflows/main.yml
+          name: Simphonea-APK
+          path: Simphonea.apk

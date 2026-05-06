@@ -150,6 +150,13 @@
                         </div>
                     </div>
 
+                    <!-- Signal Level Meter -->
+                    <div class="absolute bottom-24 w-full px-24">
+                        <div class="h-1 bg-zinc-900 rounded-full overflow-hidden">
+                            <div id="signal-level" class="h-full bg-amber-500/20 w-0 transition-all duration-75"></div>
+                        </div>
+                    </div>
+
                     <!-- Needle -->
                     <div class="absolute bottom-16 w-full px-20">
                         <div class="relative h-1 bg-zinc-900 rounded-full overflow-hidden border border-white/5">
@@ -385,7 +392,16 @@
             let rms = 0;
             for (let i = 0; i < SIZE; i++) { const v = buffer[i]; rms += v * v; }
             rms = Math.sqrt(rms / SIZE);
-            if (rms < 0.005) return null; // Signal too weak
+            
+            // Visual feedback for signal level
+            const signalMeter = document.getElementById('signal-level');
+            if (signalMeter) {
+                const level = Math.min(100, rms * 500); // Scale for visibility
+                signalMeter.style.width = `${level}%`;
+                signalMeter.style.backgroundColor = level > 10 ? 'rgba(245, 158, 11, 0.4)' : 'rgba(245, 158, 11, 0.1)';
+            }
+
+            if (rms < 0.001) return null; // Much more sensitive threshold (was 0.005)
 
             // Search range for frequency (70Hz to 1200Hz)
             const minPeriod = Math.floor(sampleRate / 1200);
@@ -434,8 +450,9 @@
                     tunerStream = await navigator.mediaDevices.getUserMedia({
                         audio: {
                             echoCancellation: false,
-                            autoGainControl: false,
-                            noiseSuppression: false
+                            autoGainControl: true, // Allow some gain control for quiet mics
+                            noiseSuppression: false,
+                            channelCount: 1
                         }
                     });
                     const AC = window.AudioContext || window.webkitAudioContext;

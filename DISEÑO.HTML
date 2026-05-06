@@ -407,43 +407,39 @@
             const minPeriod = Math.floor(sampleRate / 1200);
             const maxPeriod = Math.floor(sampleRate / 70);
             
-            let bestPeriod = -1;
-            let bestCorrelation = -1;
-            
             // Optimization: Only check the relevant period range for guitar
             const correlations = new Float32Array(maxPeriod + 2);
             
             for (let period = minPeriod; period <= maxPeriod; period++) {
-                let correlation = 0;
+                let diff = 0;
                 for (let i = 0; i < SIZE - period; i++) {
-                    correlation += Math.abs(buffer[i] - buffer[i + period]); // Difference-based correlation (more stable)
+                    diff += Math.abs(buffer[i] - buffer[i + period]);
                 }
-                
-                // Normalizing
-                correlation = 1 - (correlation / (SIZE - period));
-                correlations[period] = correlation;
-                
-                if (correlation > bestCorrelation) {
-                    bestCorrelation = correlation;
-                    bestPeriod = period;
+                correlations[period] = 1 - (diff / (SIZE - period));
+            }
+
+            // Peak picking: Find the FIRST significant peak to avoid octave jumping
+            let bestPeriod = -1;
+            const threshold = 0.82; 
+            
+            for (let p = minPeriod + 1; p < maxPeriod; p++) {
+                if (correlations[p] > threshold && correlations[p] > correlations[p - 1] && correlations[p] > correlations[p + 1]) {
+                    bestPeriod = p;
+                    break;
                 }
             }
 
-            // Quality check (0.8 is a good balance for guitar)
-            if (bestCorrelation < 0.8 || bestPeriod === -1) return null;
+            if (bestPeriod === -1) return null;
 
             // Parabolic interpolation for sub-sample accuracy
             let T0 = bestPeriod;
-            if (bestPeriod > minPeriod && bestPeriod < maxPeriod) {
-                const x1 = correlations[bestPeriod - 1], x2 = correlations[bestPeriod], x3 = correlations[bestPeriod + 1];
-                const a = (x1 + x3 - 2 * x2) / 2;
-                const b = (x3 - x1) / 2;
-                if (a) T0 = bestPeriod - b / (2 * a);
-            }
+            const x1 = correlations[bestPeriod - 1], x2 = correlations[bestPeriod], x3 = correlations[bestPeriod + 1];
+            const a = (x1 + x3 - 2 * x2) / 2;
+            const b = (x3 - x1) / 2;
+            if (a) T0 = bestPeriod - b / (2 * a);
 
             return sampleRate / T0;
         }
-
 
 
         async function toggleTuner() {
@@ -460,12 +456,12 @@
                     const AC = window.AudioContext || window.webkitAudioContext;
                     const ctx = new AC();
                     const analyser = ctx.createAnalyser();
-                    analyser.fftSize = 8192; // Doubled for better low-frequency resolution (E2 string)
+                    analyser.fftSize = 4096; // Standard size for efficiency and accuracy
 
                     // Add a Low Pass Filter to clean up harmonics (very helpful for guitar)
                     const filter = ctx.createBiquadFilter();
                     filter.type = 'lowpass';
-                    filter.frequency.value = 1000; // Adjusted slightly higher
+                    filter.frequency.value = 1200; 
 
                     const source = ctx.createMediaStreamSource(tunerStream);
                     source.connect(filter);

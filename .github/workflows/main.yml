@@ -41,6 +41,12 @@ jobs:
           # Add Android platform
           npx cap add android
 
+      - name: Patch Gradle for Kotlin Duplicates
+        run: |
+          # Add resolution strategy to handle Kotlin duplicate classes
+          # This is a common fix for Capacitor projects with mixed Kotlin versions
+          sed -i '/dependencies {/i configurations.all { resolutionStrategy.eachDependency { DependencyResolveDetails details -> if (details.requested.group == "org.jetbrains.kotlin") { details.useVersion "1.8.22" } } }' android/app/build.gradle
+
       - name: Build Android APK
         run: |
           cd android

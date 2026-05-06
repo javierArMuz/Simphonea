@@ -1,4 +1,4 @@
-name: Simphonea CI
+name: Simphonea Build
 
 on: [push]
 
@@ -9,5 +9,12 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
-      - name: Run a one-line script
-        run: echo Simphonea is ready!
+
+      - name: Create Simphonea Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Simphonea-Web-App
+          path: |
+            DISEÑO.HTML
+            manifest.json
+            .github/workflows/main.yml

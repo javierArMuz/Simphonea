@@ -23,61 +23,35 @@ jobs:
           api-level: 33
           build-tools: 33.0.2
 
-      - name: Install Bubblewrap
-        run: npm install -g @bubblewrap/cli
-
-      - name: Configure Bubblewrap
+      - name: Install Dependencies
         run: |
-          mkdir -p ~/.bubblewrap
-          echo "{\"jdkPath\":\"$JAVA_HOME\",\"androidSdkPath\":\"$ANDROID_HOME\"}" > ~/.bubblewrap/config.json
-
-      - name: Build APK
-        run: |
-          # Create manifest
-          cat <<EOF > twa-manifest.json
-          {
-            "packageId": "com.simphonea.app",
-            "host": "javierarmuz.github.io",
-            "name": "Simphonea",
-            "launcherName": "Simphonea",
-            "display": "standalone",
-            "themeColor": "#fbbf24",
-            "navigationColor": "#050506",
-            "backgroundColor": "#050506",
-            "startUrl": "/",
-            "iconUrl": "https://cdn-icons-png.flaticon.com/512/3063/3063713.png",
-            "maskableIconUrl": "https://cdn-icons-png.flaticon.com/512/3063/3063713.png",
-            "splashScreenFadeOutDuration": 300,
-            "shortcuts": [],
-            "webManifestUrl": "https://raw.githubusercontent.com/${{ github.repository }}/main/manifest.json",
-            "fallbackType": "custom_tabs",
-            "features": {},
-            "alphaDependencies": { "enabled": false },
-            "enableNotifications": false,
-            "enableInAppBilling": false,
-            "locationDelegation": false,
-            "playServicesMeasurementId": null,
-            "orientation": "portrait",
-            "fingerprints": [],
-            "additionalTrustedOrigins": [],
-            "recreateCLIConfig": false,
-            "signingKey": {
-              "path": "./my-release-key.keystore",
-              "alias": "my-key-alias"
-            }
-          }
-          EOF
-
-          # Generate keystore
-          keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000 -storepass password -keypass password -dname "CN=Simphonea, OU=Dev, O=Simphonea, L=Any, S=Any, C=US"
-
-          # Answer 'y' (yes) to regenerate project and other prompts
-          # Bubblewrap sometimes asks multiple times
-          yes y | bubblewrap build --manifest ./twa-manifest.json --signingKeyPath ./my-release-key.keystore --signingKeyAlias my-key-alias --signingKeyPassword password --signingStorePassword password
+          npm install -g @capacitor/cli @capacitor/core @capacitor/android
           
-          # Rename output
-          find . -name "*release-signed.apk" -exec mv {} Simphonea.apk \;
-          if [ ! -f Simphonea.apk ]; then find . -name "*.apk" -exec mv {} Simphonea.apk \; ; fi
+      - name: Initialize Capacitor Project
+        run: |
+          # Create a dummy package.json to satisfy Capacitor
+          echo '{"name": "simphonea", "version": "1.0.0"}' > package.json
+          
+          # Setup web directory
+          mkdir -p www
+          cp DISEÑO.HTML www/index.html
+          cp manifest.json www/
+          
+          # Initialize Capacitor
+          npx cap init Simphonea com.simphonea.app --web-dir www
+          
+          # Add Android platform
+          npx cap add android
+
+      - name: Build Android APK
+        run: |
+          cd android
+          # Run gradle build
+          chmod +x gradlew
+          ./gradlew assembleDebug
+          
+          # Move and rename the APK
+          mv app/build/outputs/apk/debug/app-debug.apk ../Simphonea.apk
 
       - name: Upload Simphonea APK
         uses: actions/upload-artifact@v4

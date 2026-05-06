@@ -41,10 +41,15 @@ jobs:
           # Add Android platform
           npx cap add android
 
+      - name: Patch Android Permissions
+        run: |
+          # Add Microphone permissions to AndroidManifest.xml
+          # We insert them before the <application> tag
+          sed -i '/<application/i \    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />' android/app/src/main/AndroidManifest.xml
+
       - name: Patch Gradle for Kotlin Duplicates
         run: |
           # Add resolution strategy to handle Kotlin duplicate classes
-          # This is a common fix for Capacitor projects with mixed Kotlin versions
           sed -i '/dependencies {/i configurations.all { resolutionStrategy.eachDependency { DependencyResolveDetails details -> if (details.requested.group == "org.jetbrains.kotlin") { details.useVersion "1.8.22" } } }' android/app/build.gradle
 
       - name: Build Android APK

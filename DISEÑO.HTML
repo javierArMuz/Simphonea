@@ -416,9 +416,11 @@
             for (let period = minPeriod; period <= maxPeriod; period++) {
                 let correlation = 0;
                 for (let i = 0; i < SIZE - period; i++) {
-                    correlation += buffer[i] * buffer[i + period];
+                    correlation += Math.abs(buffer[i] - buffer[i + period]); // Difference-based correlation (more stable)
                 }
-                correlation /= (SIZE - period); 
+                
+                // Normalizing
+                correlation = 1 - (correlation / (SIZE - period));
                 correlations[period] = correlation;
                 
                 if (correlation > bestCorrelation) {
@@ -427,8 +429,8 @@
                 }
             }
 
-            // Sanity check for result quality
-            if (bestCorrelation < 0.7 || bestPeriod === -1) return null;
+            // Quality check (0.8 is a good balance for guitar)
+            if (bestCorrelation < 0.8 || bestPeriod === -1) return null;
 
             // Parabolic interpolation for sub-sample accuracy
             let T0 = bestPeriod;
@@ -458,12 +460,12 @@
                     const AC = window.AudioContext || window.webkitAudioContext;
                     const ctx = new AC();
                     const analyser = ctx.createAnalyser();
-                    analyser.fftSize = 4096; // Increased for better low-frequency resolution
+                    analyser.fftSize = 8192; // Doubled for better low-frequency resolution (E2 string)
 
                     // Add a Low Pass Filter to clean up harmonics (very helpful for guitar)
                     const filter = ctx.createBiquadFilter();
                     filter.type = 'lowpass';
-                    filter.frequency.value = 800;
+                    filter.frequency.value = 1000; // Adjusted slightly higher
 
                     const source = ctx.createMediaStreamSource(tunerStream);
                     source.connect(filter);

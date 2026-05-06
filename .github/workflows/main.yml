@@ -29,12 +29,11 @@ jobs:
       - name: Configure Bubblewrap
         run: |
           mkdir -p ~/.bubblewrap
-          # On GitHub runner with setup-android, ANDROID_HOME is set
           echo "{\"jdkPath\":\"$JAVA_HOME\",\"androidSdkPath\":\"$ANDROID_HOME\"}" > ~/.bubblewrap/config.json
-          cat ~/.bubblewrap/config.json
 
       - name: Build APK
         run: |
+          # Create manifest
           cat <<EOF > twa-manifest.json
           {
             "packageId": "com.simphonea.app",
@@ -72,8 +71,9 @@ jobs:
           # Generate keystore
           keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000 -storepass password -keypass password -dname "CN=Simphonea, OU=Dev, O=Simphonea, L=Any, S=Any, C=US"
 
-          # Build APK using yes to skip interactive checks
-          yes | bubblewrap build --manifest ./twa-manifest.json --skipCheck --signingKeyPath ./my-release-key.keystore --signingKeyAlias my-key-alias --signingKeyPassword password --signingStorePassword password
+          # Answer 'y' (yes) to regenerate project and other prompts
+          # Bubblewrap sometimes asks multiple times
+          yes y | bubblewrap build --manifest ./twa-manifest.json --signingKeyPath ./my-release-key.keystore --signingKeyAlias my-key-alias --signingKeyPassword password --signingStorePassword password
           
           # Rename output
           find . -name "*release-signed.apk" -exec mv {} Simphonea.apk \;

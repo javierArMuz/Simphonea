@@ -108,10 +108,16 @@
                 </div>
 
             </div>
-            <button
-                class="p-2 text-zinc-500 hover:text-zinc-100 bg-zinc-900/50 rounded-lg border border-white/5 transition-colors">
-                <i data-lucide="settings" class="w-4 h-4"></i>
-            </button>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleLanguage()" id="lang-toggle"
+                    class="px-3 py-2 text-[10px] font-bold text-zinc-500 hover:text-amber-100 bg-zinc-900/50 rounded-lg border border-white/5 transition-all uppercase tracking-widest">
+                    ES
+                </button>
+                <button
+                    class="p-2 text-zinc-500 hover:text-zinc-100 bg-zinc-900/50 rounded-lg border border-white/5 transition-colors">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -134,7 +140,7 @@
                             class="w-16 h-16 rounded-2xl bg-zinc-900 border border-white/5 flex items-center justify-center">
                             <i data-lucide="activity" class="w-6 h-6 text-zinc-700 animate-pulse"></i>
                         </div>
-                        <p class="text-[10px] font-bold tracking-[0.4em] uppercase text-zinc-600">Pure Signal Search</p>
+                        <p data-i18n="signalSearch" class="text-[10px] font-bold tracking-[0.4em] uppercase text-zinc-600">Pure Signal Search</p>
                     </div>
 
                     <div id="tuner-active" class="hidden flex flex-col items-center">
@@ -143,7 +149,7 @@
                         <div class="flex flex-col items-center mt-4">
                             <span id="active-freq" class="text-zinc-500 font-mono text-xs tracking-widest">0.00
                                 Hz</span>
-                            <div id="active-status"
+                            <div id="active-status" data-i18n="waiting"
                                 class="text-[10px] font-bold uppercase tracking-[0.3em] mt-2 px-3 py-1 bg-zinc-900 rounded-full border border-white/5 text-zinc-500">
                                 WAITING...
                             </div>
@@ -170,12 +176,12 @@
 
                 <div class="flex flex-col gap-10 w-full">
                     <div class="flex items-center justify-center gap-3 overflow-x-auto no-scrollbar">
-                        <button onclick="setTuning(0)"
+                        <button onclick="setTuning(0)" data-i18n="estandar"
                             class="tuning-btn px-5 py-2.5 text-[10px] font-bold rounded-xl border border-white/10 bg-zinc-800 text-amber-100 shadow-xl uppercase tracking-widest shrink-0">Estándar</button>
-                        <button onclick="setTuning(1)"
+                        <button onclick="setTuning(1)" data-i18n="dropD"
                             class="tuning-btn px-5 py-2.5 text-[10px] font-bold rounded-xl border border-white/5 bg-transparent text-zinc-500 uppercase tracking-widest shrink-0">Drop
                             D</button>
-                        <button onclick="setTuning(2)"
+                        <button onclick="setTuning(2)" data-i18n="openG"
                             class="tuning-btn px-5 py-2.5 text-[10px] font-bold rounded-xl border border-white/5 bg-transparent text-zinc-500 uppercase tracking-widest shrink-0">Open
                             G</button>
                     </div>
@@ -183,7 +189,7 @@
                     <button id="tuner-toggle"
                         class="w-full py-5 rounded-2xl flex items-center justify-center gap-4 transition-all active:scale-[0.98] shadow-2xl font-bold tracking-[0.3em] uppercase text-[11px] border bg-amber-100 border-amber-200 text-zinc-900 hover:bg-zinc-100">
                         <i data-lucide="mic" class="w-4 h-4"></i>
-                        Initialize Tuner
+                        <span data-i18n="initTuner">Initialize Tuner</span>
                     </button>
                 </div>
             </div>
@@ -198,7 +204,7 @@
                         class="absolute inset-0 border-2 border-amber-400/0 rounded-full pointer-events-none transition-all duration-75">
                     </div>
                     <div class="z-10 flex flex-col items-center">
-                        <span class="text-zinc-600 text-[10px] font-bold tracking-[0.4em] uppercase mb-4">Metronome
+                        <span data-i18n="metronomeBpm" class="text-zinc-600 text-[10px] font-bold tracking-[0.4em] uppercase mb-4">Metronome
                             BPM</span>
                         <div class="flex items-center gap-8">
                             <button onclick="adjustBpm(-1)" class="p-2 text-zinc-600 hover:text-white"><i
@@ -221,12 +227,12 @@
                     <button id="metro-toggle"
                         class="w-32 h-32 rounded-[2.5rem] flex flex-col items-center justify-center gap-2 transition-all active:scale-[0.96] border border-white/5 bg-zinc-900 text-amber-100 hover:border-white/10 shadow-2xl">
                         <i data-lucide="play" id="metro-icon" class="w-8 h-8 ml-1"></i>
-                        <span id="metro-text" class="text-[9px] font-bold uppercase tracking-[0.2em]">Start</span>
+                        <span id="metro-text" data-i18n="start" class="text-[9px] font-bold uppercase tracking-[0.2em]">Start</span>
                     </button>
                     <button id="tap-btn"
                         class="w-32 h-32 rounded-[2.5rem] flex flex-col items-center justify-center gap-2 transition-all active:scale-[0.96] border border-white/5 bg-zinc-900/50 text-zinc-500 hover:border-white/10 shadow-2xl">
                         <i data-lucide="music" class="w-6 h-6"></i>
-                        <span class="text-[9px] font-bold uppercase tracking-[0.2em]">Tap Tempo</span>
+                        <span data-i18n="tapTempo" class="text-[9px] font-bold uppercase tracking-[0.2em]">Tap Tempo</span>
                     </button>
                 </div>
             </div>
@@ -240,8 +246,8 @@
                         class="w-12 h-12 bg-zinc-900 border border-white/5 rounded-2xl flex items-center justify-center">
                         <i data-lucide="book-open" class="w-5 h-5 text-amber-200"></i></div>
                     <div>
-                        <h2 class="text-xl font-bold tracking-tight">Growth Handbook</h2>
-                        <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em]">Master the art of the
+                        <h2 data-i18n="growthHandbook" class="text-xl font-bold tracking-tight">Growth Handbook</h2>
+                        <p data-i18n="masterSixStrings" class="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em]">Master the art of the
                             six strings</p>
                     </div>
                 </div>
@@ -260,8 +266,8 @@
                             class="w-12 h-12 bg-zinc-900 border border-white/5 rounded-2xl flex items-center justify-center">
                             <i data-lucide="edit-3" class="w-5 h-5 text-amber-200"></i></div>
                         <div>
-                            <h2 class="text-xl font-bold tracking-tight">Creation Lab</h2>
-                            <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em]">Capture your sonic
+                            <h2 data-i18n="creationLab" class="text-xl font-bold tracking-tight">Creation Lab</h2>
+                            <p data-i18n="captureInspirations" class="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em]">Capture your sonic
                                 inspirations</p>
                         </div>
                     </div>
@@ -282,7 +288,7 @@
                             <div class="flex justify-end">
                                 <button onclick="saveIdea()"
                                     class="flex items-center gap-2 px-8 py-4 bg-amber-100 rounded-2xl text-zinc-900 font-bold uppercase tracking-widest text-[11px] border border-white shadow-xl active:scale-95">
-                                    <i data-lucide="save" class="w-4 h-4"></i> Save Note
+                                    <i data-lucide="save" class="w-4 h-4"></i> <span data-i18n="saveNote">Save Note</span>
                                 </button>
                             </div>
                         </div>
@@ -309,22 +315,22 @@
         <button onclick="switchTab('tuner')" id="nav-tuner"
             class="nav-btn relative px-5 py-3 rounded-[1.5rem] flex items-center gap-3 transition-all duration-500 text-amber-100 bg-white/5 border border-white/10">
             <i data-lucide="activity" class="w-5 h-5"></i>
-            <span class="text-[11px] font-bold uppercase tracking-widest hidden sm:block">Tuner</span>
+            <span data-i18n="tunerTab" class="text-[11px] font-bold uppercase tracking-widest hidden sm:block">Tuner</span>
         </button>
         <button onclick="switchTab('tempo')" id="nav-tempo"
             class="nav-btn relative px-5 py-3 rounded-[1.5rem] flex items-center gap-3 transition-all duration-500 text-zinc-500 hover:text-zinc-300">
             <i data-lucide="timer" class="w-5 h-5"></i>
-            <span class="text-[11px] font-bold uppercase tracking-widest hidden sm:block">Tempo</span>
+            <span data-i18n="tempoTab" class="text-[11px] font-bold uppercase tracking-widest hidden sm:block">Tempo</span>
         </button>
         <button onclick="switchTab('tips')" id="nav-tips"
             class="nav-btn relative px-5 py-3 rounded-[1.5rem] flex items-center gap-3 transition-all duration-500 text-zinc-500 hover:text-zinc-300">
             <i data-lucide="book-open" class="w-5 h-5"></i>
-            <span class="text-[11px] font-bold uppercase tracking-widest hidden sm:block">Tips</span>
+            <span data-i18n="tipsTab" class="text-[11px] font-bold uppercase tracking-widest hidden sm:block">Tips</span>
         </button>
         <button onclick="switchTab('ideas')" id="nav-ideas"
             class="nav-btn relative px-5 py-3 rounded-[1.5rem] flex items-center gap-3 transition-all duration-500 text-zinc-500 hover:text-zinc-300">
             <i data-lucide="edit-3" class="w-5 h-5"></i>
-            <span class="text-[11px] font-bold uppercase tracking-widest hidden sm:block">Ideas</span>
+            <span data-i18n="ideasTab" class="text-[11px] font-bold uppercase tracking-widest hidden sm:block">Ideas</span>
         </button>
     </nav>
 
@@ -335,18 +341,41 @@
     <script>
         // --- CONSTANTS & HELPERS ---
         const NOTE_STRINGS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+        const TRANSLATIONS = {
+            es: {
+                title: "SIMPHONEA", tagline: "Herramientas Pro", tunerTab: "Afinador", tempoTab: "Tempo", tipsTab: "Consejos", ideasTab: "Ideas",
+                signalSearch: "Buscando Señal", waiting: "ESPERANDO...", perfect: "PERFECTO", cents: "CENTÉSIMAS", initTuner: "Activar Afinador", stopTuning: "Detener",
+                metronomeBpm: "BPM del Metrónomo", start: "Iniciar", stop: "Detener", tapTempo: "Tap Tempo", growthHandbook: "Handbook de Crecimiento",
+                masterSixStrings: "Domina el arte de las seis cuerdas", creationLab: "Laboratorio de Creación", captureInspirations: "Captura tus inspiraciones",
+                saveNote: "Guardar Nota", searchPlaceholder: "Buscar riffs...", noIdeas: "Sin notas guardadas", riffPlaceholder: "Escribe tu idea aquí...",
+                estandar: "Estándar", dropD: "Drop D", openG: "Open G", largo: "Largo", adagio: "Adagio", andante: "Andante", moderato: "Moderato", allegro: "Allegro", presto: "Presto",
+                tecnica: "Técnica", cuidado: "Cuidado", teoria: "Teoría"
+            },
+            en: {
+                title: "SIMPHONEA", tagline: "Professional Artist Tools", tunerTab: "Tuner", tempoTab: "Tempo", tipsTab: "Tips", ideasTab: "Ideas",
+                signalSearch: "Pure Signal Search", waiting: "WAITING...", perfect: "PERFECT", cents: "CENTS", initTuner: "Initialize Tuner", stopTuning: "Stop Tuning",
+                metronomeBpm: "Metronome BPM", start: "Start", stop: "Stop", tapTempo: "Tap Tempo", growthHandbook: "Growth Handbook",
+                masterSixStrings: "Master the art of the six strings", creationLab: "Creation Lab", captureInspirations: "Capture your sonic inspirations",
+                saveNote: "Save Note", searchPlaceholder: "Search riffs...", noIdeas: "No inspirations recorded", riffPlaceholder: "Riff in A minor...",
+                estandar: "Standard", dropD: "Drop D", openG: "Open G", largo: "Largo", adagio: "Adagio", andante: "Andante", moderato: "Moderato", allegro: "Allegro", presto: "Presto",
+                tecnica: "Technique", cuidado: "Care", teoria: "Theory"
+            }
+        };
+
         const TUNINGS = [
-            { name: "Estándar", notes: [{ n: "E2", f: 82.41 }, { n: "A2", f: 110.00 }, { n: "D3", f: 146.83 }, { n: "G3", f: 196.00 }, { n: "B3", f: 246.94 }, { n: "E4", f: 329.63 }] },
-            { name: "Drop D", notes: [{ n: "D2", f: 73.42 }, { n: "A2", f: 110.00 }, { n: "D3", f: 146.83 }, { n: "G3", f: 196.00 }, { n: "B3", f: 246.94 }, { n: "E4", f: 329.63 }] },
-            { name: "Open G", notes: [{ n: "D2", f: 73.42 }, { n: "G2", f: 98.00 }, { n: "D3", f: 146.83 }, { n: "G3", f: 196.00 }, { n: "B3", f: 246.94 }, { n: "D4", f: 293.66 }] }
+            { id: "estandar", notes: [{ n: "E2", f: 82.41 }, { n: "A2", f: 110.00 }, { n: "D3", f: 146.83 }, { n: "G3", f: 196.00 }, { n: "B3", f: 246.94 }, { n: "E4", f: 329.63 }] },
+            { id: "dropD", notes: [{ n: "D2", f: 73.42 }, { n: "A2", f: 110.00 }, { n: "D3", f: 146.83 }, { n: "G3", f: 196.00 }, { n: "B3", f: 246.94 }, { n: "E4", f: 329.63 }] },
+            { id: "openG", notes: [{ n: "D2", f: 73.42 }, { n: "G2", f: 98.00 }, { n: "D3", f: 146.83 }, { n: "G3", f: 196.00 }, { n: "B3", f: 246.94 }, { n: "D4", f: 293.66 }] }
         ];
-        const TIPS = [
-            { category: "Técnica", title: "El poder del toque ligero", content: "Muchos principiantes aprietan demasiado las cuerdas. Presiona solo lo necesario para que la nota suene limpia. Esto aumenta tu velocidad.", proTip: "Practica escalas usando un toque fantasma para desarrollar sensibilidad." },
-            { category: "Cuidado", title: "Limpieza después de tocar", content: "El sudor y la grasa corroen las cuerdas. Pasa un paño de microfibra después de cada sesión.", proTip: "Usa un poco de limpiador de trastes cada 6 meses." },
-            { category: "Teoría", title: "Entiende los Intervalos", content: "Aprende dónde está la tónica, la tercera y la quinta de cada acorde.", proTip: "La mayoría de los solos de rock se basan en saber dónde están las notas del acorde." }
+
+        const TIPS_DATA = [
+            { category: "tecnica", title_es: "El poder del toque ligero", title_en: "The Power of Light Touch", content_es: "Presiona solo lo necesario para que la nota suene limpia. Esto aumenta tu velocidad.", content_en: "Press only as much as needed for the note to sound clean. this increases your speed.", proTip_es: "Desarrolla sensibilidad.", proTip_en: "Develop sensitivity." },
+            { category: "cuidado", title_es: "Limpieza diaria", title_en: "Daily Cleaning", content_es: "El sudor y la grasa corroen las cuerdas. Pasa un paño después de cada sesión.", content_en: "Sweat and grease corrode strings. Wipe them down after every session.", proTip_es: "Usa microfibra.", proTip_en: "Use microfiber." },
+            { category: "teoria", title_es: "Intervalos básicos", title_en: "Basic Intervals", content_es: "Aprende dónde está la tónica, la tercera y la quinta de cada acorde.", content_en: "Learn where the root, third, and fifth of each chord are.", proTip_es: "Base de los solos.", proTip_en: "Foundation of solos." }
         ];
 
         // --- STATE ---
+        let currentLang = localStorage.getItem('simphonea_lang') || 'es';
         let currentTab = 'tuner';
         let isTunerActive = false;
         let isMetroPlaying = false;
@@ -473,12 +502,12 @@
 
                     document.getElementById('tuner-idle').classList.add('hidden');
                     document.getElementById('tuner-active').classList.remove('hidden');
-                    document.getElementById('tuner-toggle').innerHTML = `<div class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div> Stop Tuning`;
+                    document.getElementById('tuner-toggle').innerHTML = `<div class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div> ${i18n('stopTuning')}`;
                     document.getElementById('tuner-toggle').classList.replace('bg-amber-100', 'bg-zinc-900');
                     document.getElementById('tuner-toggle').classList.add('text-rose-400', 'border-rose-500/20');
 
                     updateTuner();
-                } catch (e) { alert("Mic access denied or error: " + e.message); }
+                } catch (e) { alert(currentLang === 'es' ? "Micrófono denegado: " : "Mic access denied: " + e.message); }
             } else {
                 stopTuner();
             }
@@ -494,7 +523,7 @@
             }
             document.getElementById('tuner-idle').classList.remove('hidden');
             document.getElementById('tuner-active').classList.add('hidden');
-            document.getElementById('tuner-toggle').innerHTML = `<i data-lucide="mic" class="w-4 h-4"></i> Initialize Tuner`;
+            document.getElementById('tuner-toggle').innerHTML = `<i data-lucide="mic" class="w-4 h-4"></i> <span data-i18n="initTuner">${i18n('initTuner')}</span>`;
             document.getElementById('tuner-toggle').classList.replace('bg-zinc-900', 'bg-amber-100');
             document.getElementById('tuner-toggle').classList.remove('text-rose-400', 'border-rose-500/20');
             document.getElementById('needle').style.transform = `translateX(0px)`;
@@ -526,17 +555,17 @@
                 smoothedCents = smoothedCents + (cents - smoothedCents) * SMOOTHING_FACTOR;
                 
                 if (Math.abs(cents) < 3) {
-                    status.innerText = "PERFECT";
+                    status.innerText = i18n('perfect');
                     status.className = "text-[10px] font-bold uppercase tracking-[0.3em] mt-2 px-3 py-1 bg-amber-400/10 rounded-full border border-amber-400/20 text-amber-200";
                     noteEl.className = "text-9xl font-light tracking-tighter transition-all duration-300 text-amber-200 drop-shadow-[0_0_25px_rgba(251,191,36,0.3)] scale-110";
                     needle.className = "absolute top-0 bottom-0 left-1/2 w-0.5 -ml-[0.125rem] bg-amber-400 transition-none z-20 shadow-[0_0_15px_rgba(251,191,36,0.8)]";
                 } else if (Math.abs(cents) < 10) {
-                    status.innerText = cents > 0 ? `+${cents} CENTS` : `${cents} CENTS`;
+                    status.innerText = cents > 0 ? `+${cents} ${i18n('cents')}` : `${cents} ${i18n('cents')}`;
                     status.className = "text-[10px] font-bold uppercase tracking-[0.3em] mt-2 px-3 py-1 bg-zinc-900 rounded-full border border-white/10 text-zinc-300";
                     noteEl.className = "text-9xl font-light tracking-tighter transition-all duration-300 text-zinc-300";
                     needle.className = "absolute top-0 bottom-0 left-1/2 w-0.5 -ml-[0.125rem] bg-zinc-400 transition-none z-20";
                 } else {
-                    status.innerText = cents > 0 ? `+${cents} CENTS` : `${cents} CENTS`;
+                    status.innerText = cents > 0 ? `+${cents} ${i18n('cents')}` : `${cents} ${i18n('cents')}`;
                     status.className = "text-[10px] font-bold uppercase tracking-[0.3em] mt-2 px-3 py-1 bg-zinc-900 rounded-full border border-white/5 text-zinc-600";
                     noteEl.className = "text-9xl font-light tracking-tighter transition-all duration-300 text-zinc-600";
                     needle.className = "absolute top-0 bottom-0 left-1/2 w-0.5 -ml-[0.125rem] bg-zinc-600 transition-none z-20";
@@ -570,13 +599,13 @@
                 isMetroPlaying = true;
                 nextNoteTime = audioCtx.currentTime + 0.05;
                 scheduler();
-                document.getElementById('metro-text').innerText = "Stop";
+                document.getElementById('metro-text').innerText = i18n('stop');
                 document.getElementById('metro-icon').setAttribute('data-lucide', 'pause');
                 document.getElementById('metro-toggle').className = "w-32 h-32 rounded-[2.5rem] flex flex-col items-center justify-center gap-2 transition-all active:scale-[0.96] border border-white bg-amber-100 text-zinc-900 shadow-2xl";
             } else {
                 isMetroPlaying = false;
                 clearTimeout(timerID);
-                document.getElementById('metro-text').innerText = "Start";
+                document.getElementById('metro-text').innerText = i18n('start');
                 document.getElementById('metro-icon').setAttribute('data-lucide', 'play');
                 document.getElementById('metro-toggle').className = "w-32 h-32 rounded-[2.5rem] flex flex-col items-center justify-center gap-2 transition-all active:scale-[0.96] border border-white/5 bg-zinc-900 text-amber-100 shadow-2xl";
             }
@@ -618,11 +647,11 @@
 
         function refreshBpm() {
             document.getElementById('bpm-display').innerText = bpm;
-            const names = ["Largo", "Adagio", "Andante", "Moderato", "Allegro", "Presto"];
+            const names = ["largo", "adagio", "andante", "moderato", "allegro", "presto"];
             const limits = [60, 76, 108, 120, 168, 300];
-            let name = names[names.length - 1];
-            for (let i = 0; i < limits.length; i++) { if (bpm < limits[i]) { name = names[i]; break; } }
-            document.getElementById('tempo-name').innerText = name;
+            let key = names[names.length - 1];
+            for (let i = 0; i < limits.length; i++) { if (bpm < limits[i]) { key = names[i]; break; } }
+            document.getElementById('tempo-name').innerText = i18n(key);
         }
 
         document.getElementById('tap-btn').addEventListener('pointerdown', () => {
@@ -641,18 +670,18 @@
         // --- TIPS LOGIC ---
         function renderTips() {
             const container = document.getElementById('tips-container');
-            container.innerHTML = TIPS.map((tip, i) => `
+            container.innerHTML = TIPS_DATA.map((tip, i) => `
                 <div onclick="toggleTip(${i})" class="tip-card p-8 rounded-3xl border border-white/5 bg-zinc-900 hover:border-white/10 transition-all cursor-pointer group shadow-xl">
                     <div class="flex items-start justify-between">
                         <div class="flex flex-col gap-3">
-                            <span class="text-[9px] font-bold uppercase tracking-[0.4em] text-zinc-500">${tip.category}</span>
-                            <h3 class="text-xl font-bold tracking-tight">${tip.title}</h3>
+                            <span class="text-[9px] font-bold uppercase tracking-[0.4em] text-zinc-500">${i18n(tip.category)}</span>
+                            <h3 class="text-xl font-bold tracking-tight">${currentLang === 'es' ? tip.title_es : tip.title_en}</h3>
                         </div>
                         <div id="tip-chevron-${i}" class="transition-transform"><i data-lucide="chevron-right" class="w-4 h-4 text-zinc-500"></i></div>
                     </div>
                     <div id="tip-content-${i}" class="hidden mt-8 flex flex-col gap-6">
-                        <p class="text-zinc-400 text-[15px] leading-[1.7]">${tip.content}</p>
-                        <div class="p-6 bg-amber-50/5 rounded-2xl border border-amber-500/10 italic text-zinc-200 text-sm">"${tip.proTip}"</div>
+                        <p class="text-zinc-400 text-[15px] leading-[1.7]">${currentLang === 'es' ? tip.content_es : tip.content_en}</p>
+                        <div class="p-6 bg-amber-50/5 rounded-2xl border border-amber-500/10 italic text-zinc-200 text-sm">"${currentLang === 'es' ? tip.proTip_es : tip.proTip_en}"</div>
                     </div>
                 </div>
             `).join('');
@@ -690,7 +719,7 @@
                         <button onclick="deleteIdea('${i.id}')" class="p-3 rounded-xl bg-zinc-900 text-zinc-700 hover:text-white border border-white/5 opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </div>
                 </div>
-            `).join('') : `<div class="py-20 text-center opacity-20 uppercase text-[10px] tracking-widest font-bold">No inspirations recorded</div>`;
+            `).join('') : `<div class="py-20 text-center opacity-20 uppercase text-[10px] tracking-widest font-bold">${i18n('noIdeas')}</div>`;
             lucide.createIcons();
         }
 
@@ -719,15 +748,36 @@
         });
         document.getElementById('search-ideas').addEventListener('input', renderIdeas);
 
+        function i18n(key) { return TRANSLATIONS[currentLang][key] || key; }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'es' ? 'en' : 'es';
+            localStorage.setItem('simphonea_lang', currentLang);
+            updateUI();
+        }
+
         function initTags() {
             const container = document.getElementById('tag-selector');
+            if (!container) return;
             container.innerHTML = tags.map(t => `<button onclick="selectedTag='${t}'; initTags()" class="px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] border transition-all ${selectedTag === t ? 'bg-amber-100 border-white text-zinc-900' : 'bg-zinc-900 border-white/5 text-zinc-600'}">${t}</button>`).join('');
         }
 
+        function updateUI() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                el.innerText = i18n(key);
+            });
+            document.getElementById('lang-toggle').innerText = currentLang.toUpperCase();
+            document.getElementById('search-ideas').placeholder = i18n('searchPlaceholder');
+            document.getElementById('idea-content').placeholder = i18n('riffPlaceholder');
+            refreshBpm();
+            renderTips();
+            renderIdeas();
+            initTags();
+        }
+
         // Initialize state
-        renderTips();
-        renderIdeas();
-        initTags();
+        updateUI();
         lucide.createIcons();
     </script>
 </body>

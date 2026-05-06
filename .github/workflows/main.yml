@@ -22,14 +22,13 @@ jobs:
         with:
           packages: 'platforms;android-33 build-tools;33.0.2 platform-tools'
 
-      - name: Install Dependencies
-        run: |
-          npm install -g @capacitor/cli @capacitor/core @capacitor/android
-          
       - name: Initialize Capacitor Project
         run: |
           # Create a dummy package.json
           echo '{"name": "simphonea", "version": "1.0.0"}' > package.json
+          
+          # Install dependencies LOCALLY (Capacitor requires this)
+          npm install @capacitor/cli @capacitor/core @capacitor/android
           
           # Setup web directory
           mkdir -p www

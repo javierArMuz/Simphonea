@@ -20,8 +20,7 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          api-level: 33
-          build-tools: 33.0.2
+          packages: 'platforms;android-33 build-tools;33.0.2 platform-tools'
 
       - name: Install Dependencies
         run: |
@@ -29,7 +28,7 @@ jobs:
           
       - name: Initialize Capacitor Project
         run: |
-          # Create a dummy package.json to satisfy Capacitor
+          # Create a dummy package.json
           echo '{"name": "simphonea", "version": "1.0.0"}' > package.json
           
           # Setup web directory

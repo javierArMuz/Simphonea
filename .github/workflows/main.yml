@@ -22,14 +22,12 @@ jobs:
 
       - name: Configure Bubblewrap
         run: |
-          # Use bubblewrap updateConfig to set paths correctly
-          # These paths are standard on GitHub Hosted Ubuntu Runners
-          bubblewrap updateConfig --jdkPath "$JAVA_HOME" --androidSdkPath "$ANDROID_SDK_ROOT"
+          # Use 'yes n' to answer 'No' to 'Do you want to install JDK?' 
+          # because we already have JDK 17 from setup-java
+          yes n | bubblewrap updateConfig --jdkPath "$JAVA_HOME" --androidSdkPath "$ANDROID_SDK_ROOT"
 
       - name: Build APK
         run: |
-          # Create twa-manifest.json with a valid host and local manifest reference
-          # Note: packageId must follow Android conventions
           cat <<EOF > twa-manifest.json
           {
             "packageId": "com.simphonea.app",
@@ -67,12 +65,11 @@ jobs:
           # Generate a temporary keystore
           keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000 -storepass password -keypass password -dname "CN=Simphonea, OU=Dev, O=Simphonea, L=Any, S=Any, C=US"
 
-          # Use yes to accept all licenses and prompts
+          # Run build non-interactively
           yes | bubblewrap build --manifest ./twa-manifest.json --skipCheck --signingKeyPath ./my-release-key.keystore --signingKeyAlias my-key-alias --signingKeyPassword password --signingStorePassword password
           
-          # Find the signed APK and rename it
+          # Rename the final APK
           find . -name "*release-signed.apk" -exec mv {} Simphonea.apk \;
-          # If signed failed, try debug
           if [ ! -f Simphonea.apk ]; then find . -name "*.apk" -exec mv {} Simphonea.apk \; ; fi
 
       - name: Upload Simphonea APK
